@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import Like from "./common/like";
 import Pagination from "./common/pagination";
+import paginate from "./utils/paginate";
 
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
@@ -25,6 +26,7 @@ function Movies() {
 
   if (movies.length === 0) return <p>No movies in the database</p>;
 
+  const moviesOnPage = paginate(movies, currentPage, pageSize);
   return (
     <>
       <p>There are {movies.length} movies in the database</p>
@@ -40,7 +42,7 @@ function Movies() {
           </tr>
         </thead>
         <tbody>
-          {movies.map((movie) => (
+          {moviesOnPage.map((movie) => (
             <tr key={movie._id}>
               <td>{movie.title}</td>
               <td>{movie.genre.name}</td>
