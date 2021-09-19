@@ -11,10 +11,12 @@ function Movies() {
   const [genres, setGenres] = useState([]);
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentGenre, setCurrentGenre] = useState();
 
   useEffect(() => {
     setMovies(getMovies());
-    setGenres(getGenres());
+    setGenres([{ _id: 0, name: "All movies" }, ...getGenres()]);
+    setCurrentGenre(genres[0]);
   }, []);
 
   const handleLike = (movie) => {
@@ -34,18 +36,30 @@ function Movies() {
 
   const handleSelectGenre = (genre) => {
     console.log(genre);
+    setCurrentGenre(genre);
+    setCurrentPage(1);
   };
 
   if (movies.length === 0) return <p>No movies in the database</p>;
 
-  const moviesOnPage = paginate(movies, currentPage, pageSize);
+  const filteredMovies =
+    currentGenre && currentGenre._id
+      ? movies.filter((movie) => movie.genre._id === currentGenre._id)
+      : movies;
+
+  const moviesOnPage = paginate(filteredMovies, currentPage, pageSize);
+
   return (
     <div className="row">
       <div className="col-2">
-        <ListGroup items={genres} onItemSelect={handleSelectGenre} />
+        <ListGroup
+          items={genres}
+          currentItem={currentGenre}
+          onItemSelect={handleSelectGenre}
+        />
       </div>
       <div className="col">
-        <p>There are {movies.length} movies in the database</p>
+        <p>There are {filteredMovies.length} movies in the database</p>
         <table className="table">
           <thead>
             <tr>
@@ -80,7 +94,7 @@ function Movies() {
           </tbody>
         </table>
         <Pagination
-          itemsCount={movies.length}
+          itemsCount={filteredMovies.length}
           pageSize={pageSize}
           currentPage={currentPage}
           onPageChange={handlePageChange}
