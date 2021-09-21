@@ -11,8 +11,8 @@ const ListGroup = ({ items, id, name, currentItem, onItemSelect }) => {
             onClick={() => onItemSelect(item)}
             className={
               item === currentItem
-                ? "list-group-item active"
-                : "list-group-item"
+                ? "list-group-item active clickable"
+                : "list-group-item clickable"
             }
           >
             {item[name]}
