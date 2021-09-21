@@ -13,7 +13,7 @@ function Movies() {
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentGenre, setCurrentGenre] = useState();
-  const [sortBy, setSortBy] = useState({ column: "title", order: "asc" });
+  const [sortBy, setSortBy] = useState({ key: "title", order: "asc" });
 
   useEffect(() => {
     setMovies(getMovies());
@@ -51,11 +51,7 @@ function Movies() {
       ? movies.filter((movie) => movie.genre._id === currentGenre._id)
       : movies;
 
-  const sortedMovies = _.orderBy(
-    filteredMovies,
-    [sortBy.column],
-    [sortBy.order]
-  );
+  const sortedMovies = _.orderBy(filteredMovies, [sortBy.key], [sortBy.order]);
 
   const moviesOnPage = paginate(sortedMovies, currentPage, pageSize);
 
