@@ -5,6 +5,7 @@ import ListGroup from "./common/listgroup";
 import Pagination from "./common/pagination";
 import MoviesTable from "./moviesTable";
 import paginate from "./utils/paginate";
+import _ from "lodash";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -12,10 +13,11 @@ function Movies() {
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentGenre, setCurrentGenre] = useState();
+  const [sortBy, setSortBy] = useState({ column: "title", order: "asc" });
 
   useEffect(() => {
     setMovies(getMovies());
-    setGenres([{ _id: 0, name: "All movies" }, ...getGenres()]);
+    setGenres([{ _id: "", name: "All movies" }, ...getGenres()]);
   }, []);
 
   const handleLike = (movie) => {
@@ -34,9 +36,12 @@ function Movies() {
   };
 
   const handleSelectGenre = (genre) => {
-    console.log(genre);
     setCurrentGenre(genre);
     setCurrentPage(1);
+  };
+
+  const handleSort = (sortBy) => {
+    setSortBy(sortBy);
   };
 
   if (movies.length === 0) return <p>No movies in the database</p>;
@@ -46,7 +51,13 @@ function Movies() {
       ? movies.filter((movie) => movie.genre._id === currentGenre._id)
       : movies;
 
-  const moviesOnPage = paginate(filteredMovies, currentPage, pageSize);
+  const sortedMovies = _.orderBy(
+    filteredMovies,
+    [sortBy.column],
+    [sortBy.order]
+  );
+
+  const moviesOnPage = paginate(sortedMovies, currentPage, pageSize);
 
   return (
     <div className="row">
@@ -61,8 +72,10 @@ function Movies() {
         <p>There are {filteredMovies.length} movies in the database</p>
         <MoviesTable
           movies={moviesOnPage}
+          sortBy={sortBy}
           onLike={handleLike}
           onDelete={handleDelete}
+          onSort={handleSort}
         />
         <Pagination
           itemsCount={filteredMovies.length}

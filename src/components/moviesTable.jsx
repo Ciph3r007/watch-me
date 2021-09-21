@@ -1,15 +1,22 @@
 import React from "react";
 import Like from "./common/like";
 
-const MoviesTable = ({ movies, onLike, onDelete }) => {
+const MoviesTable = ({ movies, sortBy, onLike, onDelete, onSort }) => {
+  const raiseSort = (column) => {
+    let order = "asc";
+    if (sortBy.column === column)
+      order = sortBy.order === "asc" ? "desc" : "asc";
+    onSort({ column, order });
+  };
+
   return (
     <table className="table">
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Genre</th>
-          <th>Stock</th>
-          <th>Rate</th>
+          <th onClick={() => raiseSort("title")}>Title</th>
+          <th onClick={() => raiseSort("genre.name")}>Genre</th>
+          <th onClick={() => raiseSort("numberInStock")}>Stock</th>
+          <th onClick={() => raiseSort("dailyRentalRate")}>Rate</th>
           <th></th>
           <th></th>
         </tr>
